@@ -3,28 +3,15 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ValuationData } from "../../_types/form";
 
-interface ValuationFormData {
-  title?: string;
-  eventType?: string;
-  startTime?: string;
-  endTime?: string;
-  propertyOwner?: string;
-  location?: string;
-  staff?: string[];
-  notes?: string;
-  instructionStatus?: string;
-  followUpDate?: string;
-  sendNotification?: boolean;
-}
-
-interface ValuationProps {
-  formData: ValuationFormData;
-  onFormDataChange: (newData: Partial<ValuationFormData>) => void;
-}
+type ValuationProps = {
+    formData: ValuationData;
+    onFormDataChange: (data: Partial<Omit<ValuationData, 'eventType'>>) => void;
+  };
 
 const Valuation: React.FC<ValuationProps> = ({ formData, onFormDataChange }) => {
-  const handleChange = (field: keyof ValuationFormData, value: any) => {
+  const handleChange = (field: keyof ValuationData, value: any) => {
     onFormDataChange({ [field]: value });
   };
 

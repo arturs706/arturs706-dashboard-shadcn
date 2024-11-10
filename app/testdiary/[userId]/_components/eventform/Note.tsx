@@ -9,23 +9,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { NoteData } from "../../_types/form";
 
-interface NoteFormData {
-  type?: string;
-  startDateTime?: Date;
-  endDateTime?: Date;
-  note?: string;
-  staff?: string[];
-  isPrivate?: boolean;
-  sendNotification?: boolean;
-  isRecurring?: boolean;
-  recurrencePattern?: string;
-}
-
-interface NoteProps {
-  formData: NoteFormData;
-  onFormDataChange: (data: Partial<NoteFormData>) => void;
-}
+type NoteProps = {
+  formData: NoteData;
+  onFormDataChange: (data: Partial<Omit<NoteData, 'eventType'>>) => void;
+};
 
 const Note: React.FC<NoteProps> = ({ formData, onFormDataChange }) => {
   const staffOptions = [
@@ -48,8 +37,10 @@ const Note: React.FC<NoteProps> = ({ formData, onFormDataChange }) => {
       <div className="space-y-2">
         <Label>Note Type</Label>
         <Select
-          value={formData.type}
-          onValueChange={(value) => onFormDataChange({ type: value })}
+          value={formData.noteType}
+          onValueChange={(value) =>
+            onFormDataChange({ noteType: value as NoteData["noteType"] })
+          }
         >
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Select type" />
@@ -68,9 +59,7 @@ const Note: React.FC<NoteProps> = ({ formData, onFormDataChange }) => {
         <Label>Staff</Label>
         <Select
           value={formData.staff?.[0]}
-          onValueChange={(value) =>
-            onFormDataChange({ staff: [value] })
-          }
+          onValueChange={(value) => onFormDataChange({ staff: [value] })}
         >
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Select staff" />

@@ -9,11 +9,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { TrainingData } from "../../_types/form";
 
-interface TrainingProps {
-  formData: any;
-  onFormDataChange: (data: any) => void;
-}
+type TrainingProps = {
+    formData: TrainingData;
+    onFormDataChange: (data: Partial<Omit<TrainingData, 'eventType'>>) => void;
+};
 
 const Training: React.FC<TrainingProps> = ({ formData, onFormDataChange }) => {
   const handleChange = (field: string, value: any) => {

@@ -9,20 +9,14 @@ import {
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
+import { InspectionData } from "../../_types/form";
 
-interface InspectionProps {
-  formData: {
-    inspectionType?: string;
-    letting?: string;
-    inspectionStatus?: string;
-    staffInspectors?: string[];
-    supplierInspector?: string;
-    officeNotes?: string;
-    tenantConfirmed?: boolean;
-    sendNotification?: boolean;
-  };
-  onFormDataChange: (data: Partial<InspectionProps["formData"]>) => void;
-}
+
+type InspectionProps = {
+  formData: InspectionData;
+  onFormDataChange: (data: Partial<Omit<InspectionData, 'eventType'>>) => void;
+};
+
 
 const Inspection: React.FC<InspectionProps> = ({ formData, onFormDataChange }) => {
   const inspectionTypes = [
@@ -62,7 +56,7 @@ const Inspection: React.FC<InspectionProps> = ({ formData, onFormDataChange }) =
         <Select
           value={formData.inspectionType}
           onValueChange={(value) =>
-            onFormDataChange({ inspectionType: value })
+            onFormDataChange({ inspectionType: value as InspectionData['inspectionType'] })
           }
         >
           <SelectTrigger className="w-full">
@@ -94,7 +88,7 @@ const Inspection: React.FC<InspectionProps> = ({ formData, onFormDataChange }) =
         <Select
           value={formData.inspectionStatus}
           onValueChange={(value) =>
-            onFormDataChange({ inspectionStatus: value })
+            onFormDataChange({ inspectionStatus: value as InspectionData['inspectionStatus'] })
           }
         >
           <SelectTrigger className="w-full">

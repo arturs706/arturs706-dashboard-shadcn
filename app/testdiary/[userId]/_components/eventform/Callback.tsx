@@ -23,15 +23,11 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { CallbackData } from '../../_types/form';
 
-interface CallbackProps {
-  formData: {
-    contact?: string;
-    description?: string;
-    staff?: string[];
-    sendNotification?: boolean;
-  };
-  onFormDataChange: (data: Partial<CallbackProps['formData']>) => void;
+type CallbackProps = {
+  formData: CallbackData;
+  onFormDataChange: (data: Partial<Omit<CallbackData, 'eventType'>>) => void;
 }
 
 const Callback: React.FC<CallbackProps> = ({ formData, onFormDataChange }) => {

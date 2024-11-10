@@ -3,30 +3,19 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ViewingData } from "../../_types/form";
 
-interface ViewingFormData {
-  property?: string;
-  staff?: string[];
-  viewingStatus?: string;
-  isSecondViewing?: boolean;
-  isVirtualViewing?: boolean;
-  arrangements?: string;
-  feedback?: string;
-  internalNotes?: string;
-  followUpDate?: string;
-  isClosed?: boolean;
-  sendNotification?: boolean;
-}
 
-interface ViewingProps {
-  formData: ViewingFormData;
-  onFormDataChange: (newData: Partial<ViewingFormData>) => void;
-}
+type ViewingProps = {
+  formData: ViewingData;
+  onFormDataChange: (data: Partial<Omit<ViewingData, 'eventType'>>) => void;
+};
 
 const Viewing: React.FC<ViewingProps> = ({ formData, onFormDataChange }) => {
-  const handleChange = (field: keyof ViewingFormData, value: any) => {
+  const handleChange = (field: keyof ViewingData, value: any) => {
     onFormDataChange({ [field]: value });
   };
+
 
   return (
     <div className="space-y-4">
@@ -126,7 +115,7 @@ const Viewing: React.FC<ViewingProps> = ({ formData, onFormDataChange }) => {
         <Label>Follow-up Date</Label>
         <Input
           type="date"
-          value={formData.followUpDate}
+          value={formData.followUpDate || ''}
           onChange={(e) => handleChange('followUpDate', e.target.value)}
         />
       </div>

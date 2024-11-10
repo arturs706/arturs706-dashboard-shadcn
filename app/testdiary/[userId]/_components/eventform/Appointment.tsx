@@ -11,22 +11,11 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Command, CommandInput } from '@/components/ui/command';
+import { AppointmentData } from '../../_types/form';
 
-interface AppointmentProps {
-  formData: {
-    appointmentType?: string;
-    title?: string;
-    location?: string;
-    property?: string;
-    description?: string;
-    staff?: string[];
-    additionalAttendees?: string[];
-    isPrivate?: boolean;
-    sendNotification?: boolean;
-    isRecurring?: boolean;
-    recurrencePattern?: string;
-  };
-  onFormDataChange: (data: Partial<AppointmentProps['formData']>) => void;
+type AppointmentProps = {
+  formData: AppointmentData;
+  onFormDataChange: (data: Partial<Omit<AppointmentData, 'eventType'>>) => void;
 }
 
 const Appointment: React.FC<AppointmentProps> = ({ formData, onFormDataChange }) => {

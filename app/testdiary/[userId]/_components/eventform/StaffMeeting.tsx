@@ -9,19 +9,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
+import { StaffMeetingData } from "../../_types/form";
 
-interface StaffMeetingProps {
-  formData: {
-    title: string;
-    location?: string;
-    meetingType?: string;
-    agenda?: string;
-    internalNotes?: string;
-    staff?: string[];
-    sendNotification?: boolean;
-  };
-  onFormDataChange: (data: Partial<StaffMeetingProps["formData"]>) => void;
-}
+type StaffMeetingProps = {
+    formData: StaffMeetingData;
+    onFormDataChange: (data: Partial<Omit<StaffMeetingData, 'eventType'>>) => void;
+};
 
 const StaffMeeting: React.FC<StaffMeetingProps> = ({
   formData,

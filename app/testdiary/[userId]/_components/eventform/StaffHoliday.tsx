@@ -10,11 +10,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { StaffHolidayData } from "../../_types/form";
 
-interface StaffHolidayProps {
-  formData: any;
-  onFormDataChange: (data: any) => void;
-}
+type StaffHolidayProps = {
+    formData: StaffHolidayData
+    onFormDataChange: (data: Partial<Omit<StaffHolidayData, 'eventType'>>) => void;
+};
+
 
 const StaffHoliday: React.FC<StaffHolidayProps> = ({
   formData,

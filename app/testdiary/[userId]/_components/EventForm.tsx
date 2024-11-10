@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Select,
   SelectContent,
@@ -8,7 +8,6 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { useState } from "react";
 import TimePicker from "./TimePicker";
 import Viewing from "./eventform/Viewing";
 import Appointment from "./eventform/Appointment";
@@ -22,53 +21,31 @@ import StaffHoliday from "./eventform/StaffHoliday";
 import { Training } from "./eventform/Training";
 import Valuation from "./eventform/Valuation";
 import StaffMeeting from "./eventform/StaffMeeting";
+import {
+  createInitialEventData,
+  EVENT_TYPES,
+  EventFormData,
+  validateEventData,
+} from '../_types/form';
 
 interface EventFormProps {
   rowIndex: number | null;
   colIndex: number | null;
 }
 
-interface EventFormData {
-  title: string;
-  eventType: string;
-  startTime: string;
-  endTime: string;
-  property?: string;
-  staff?: string[];
-  viewingStatus?: string;
-  isSecondViewing?: boolean;
-  isVirtualViewing?: boolean;
-  arrangements?: string;
-  feedback?: string;
-  internalNotes?: string;
-  followUpDate?: string;
-  isClosed?: boolean;
-  sendNotification?: boolean;
-}
-
-const EVENT_TYPES = [
-  "Appointment",
-  "Inspection",
-  "Maintenance",
-  "Note",
-  "Callback",
-  "Public Holiday",
-  "Sick Leave",
-  "Staff Holiday",
-  "Staff Meeting",
-  "Training",
-  "Valuation",
-  "Viewing",
-] as const;
+type EventComponentMap = {
+  [K in EventFormData['eventType']]: React.ComponentType<{
+    formData: Extract<EventFormData, { eventType: K }>;
+    onFormDataChange: (data: Partial<Omit<Extract<EventFormData, { eventType: K }>, 'eventType'>>) => void;
+  }>;
+};
 
 const EventForm: React.FC<EventFormProps> = ({ rowIndex, colIndex }) => {
   const calculateTime = (row: number | null): string => {
     if (row === null) return "00:00";
     const hour = Math.floor(row / 2);
     const minute = (row % 2) * 30;
-    const formattedHour = hour.toString().padStart(2, "0");
-    const formattedMinute = minute.toString().padStart(2, "0");
-    return `${formattedHour}:${formattedMinute}`;
+    return `${hour.toString().padStart(2, "0")}:${minute.toString().padStart(2, "0")}`;
   };
 
   const calculateEndTime = (startTime: string): string => {
@@ -90,22 +67,24 @@ const EventForm: React.FC<EventFormProps> = ({ rowIndex, colIndex }) => {
     return `${newHours.toString().padStart(2, "0")}:${newMinutes.toString().padStart(2, "0")}`;
   };
 
-  const [formData, setFormData] = useState<EventFormData>({
-    title: "",
-    eventType: "Viewing",
-    startTime: calculateTime(rowIndex),
-    endTime: calculateEndTime(calculateTime(rowIndex)),
-    property: "",
-    staff: [],
-    viewingStatus: "Scheduled",
-    isSecondViewing: false,
-    isVirtualViewing: false,
-    arrangements: "",
-    feedback: "",
-    internalNotes: "",
-    followUpDate: "",
-    isClosed: false,
-    sendNotification: true,
+  const EVENT_COMPONENTS: EventComponentMap = {
+    "Viewing": Viewing,
+    "Appointment": Appointment,
+    "Callback": Callback,
+    "Inspection": Inspection,
+    "Maintenance": Maintenance,
+    "Note": Note,
+    "Public Holiday": PublicHoliday,
+    "Sick Leave": SickLeave,
+    "Staff Holiday": StaffHoliday,
+    "Staff Meeting": StaffMeeting,
+    "Training": Training,
+    "Valuation": Valuation,
+  };
+
+  const [formData, setFormData] = useState<EventFormData>(() => {
+    const initialTime = calculateTime(rowIndex);
+    return createInitialEventData("Viewing");
   });
 
   const handleTimeChange = (type: "startTime" | "endTime", value: string) => {
@@ -116,41 +95,40 @@ const EventForm: React.FC<EventFormProps> = ({ rowIndex, colIndex }) => {
     }));
   };
 
-  const handleDurationChange = (value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      eventType: value,
-    }));
+  const handleEventTypeChange = (value: typeof EVENT_TYPES[number]) => {
+    // Create new form data with the new event type while preserving times
+    const { startTime, endTime } = formData;
+    const newData = createInitialEventData(value);
+    setFormData({
+      ...newData,
+      startTime,
+      endTime,
+    });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(formData);
+    const isValid = validateEventData(formData);
+    console.log("Event Type:", formData.eventType);
+    console.log(isValid);
   };
 
   const renderEventTypeFields = () => {
-    const components = {
-      Viewing,
-      Appointment,
-      Callback,
-      Inspection,
-      Maintenance,
-      Note,
-      "Public Holiday": PublicHoliday,
-      "Sick Leave": SickLeave,
-      "Staff Holiday": StaffHoliday,
-      "Staff Meeting": StaffMeeting,
-      Training,
-      Valuation,
+    const Component = EVENT_COMPONENTS[formData.eventType];
+    
+    if (!Component) return null;
+  
+    const eventTypeProps = {
+      formData,
+      onFormDataChange: (newData: Partial<Omit<typeof formData, 'eventType'>>) => {
+        setFormData(prev => ({
+          ...prev,
+          ...newData
+        }));
+      }
     };
-
-    const Component = components[formData.eventType as keyof typeof components];
-    return Component ? (
-      <Component
-        formData={formData}
-        onFormDataChange={(newData) => setFormData((prev) => ({ ...prev, ...newData }))}
-      />
-    ) : null;
+  
+    return <Component {...(eventTypeProps as any)} />;
   };
 
   return (
@@ -162,7 +140,7 @@ const EventForm: React.FC<EventFormProps> = ({ rowIndex, colIndex }) => {
           <Label htmlFor="eventType" className="block">Event Type</Label>
           <Select
             defaultValue={formData.eventType}
-            onValueChange={handleDurationChange}
+            onValueChange={handleEventTypeChange}
             name="eventType"
           >
             <SelectTrigger className="w-full" id="eventType">

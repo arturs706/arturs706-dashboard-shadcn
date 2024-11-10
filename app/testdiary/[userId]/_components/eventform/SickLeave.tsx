@@ -11,11 +11,12 @@ import {
 } from "@/components/ui/select";
 import { useState } from "react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { SickLeaveData } from "../../_types/form";
 
-interface SickLeaveProps {
-    formData: any;
-    onFormDataChange: (data: any) => void;
-  }
+type SickLeaveProps = {
+  formData: SickLeaveData
+  onFormDataChange: (data: Partial<Omit<SickLeaveData, 'eventType'>>) => void;
+};
   
   const SickLeave: React.FC<SickLeaveProps> = ({ formData, onFormDataChange }) => {
     const [showRecurrencePattern, setShowRecurrencePattern] = useState(false);

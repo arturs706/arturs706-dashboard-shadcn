@@ -23,33 +23,38 @@ import {
 import { Button } from "@/components/ui/button";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { MaintenanceData } from "../../_types/form";
 
-interface MaintenanceProps {
-  formData: any;
-  onFormDataChange: (data: any) => void;
-}
+type MaintenanceProps = {
+  formData: MaintenanceData;
+  onFormDataChange: (data: Partial<Omit<MaintenanceData, 'eventType'>>) => void;
+};
+
+type MaintenanceType = typeof maintenanceTypes[number];
+
 
 const maintenanceTypes = [
   "Routine",
   "Emergency",
   "Preventive",
   "Corrective",
-  "Scheduled",
-];
+  "Scheduled"
+] as const;
 
+// Define the staff members constant
 const staffMembers = [
-  "John Smith",
-  "Jane Doe",
+  "John Doe",
+  "Jane Smith",
   "Mike Johnson",
-  "Sarah Williams",
-  "Robert Brown",
-];
+  "Sarah Williams"
+] as const;
+
 
 const Maintenance: React.FC<MaintenanceProps> = ({ formData, onFormDataChange }) => {
   const handleStaffSelection = (value: string) => {
     const currentStaff = formData.staff || [];
     const updatedStaff = currentStaff.includes(value)
-      ? currentStaff.filter((staff: string) => staff !== value)
+      ? currentStaff.filter((staff) => staff !== value)
       : [...currentStaff, value];
     
     onFormDataChange({ staff: updatedStaff });
@@ -61,7 +66,9 @@ const Maintenance: React.FC<MaintenanceProps> = ({ formData, onFormDataChange })
         <Label>Maintenance Type</Label>
         <Select
           value={formData.maintenanceType}
-          onValueChange={(value) => onFormDataChange({ maintenanceType: value })}
+          onValueChange={(value: MaintenanceType) => 
+            onFormDataChange({ maintenanceType: value })
+          }
         >
           <SelectTrigger>
             <SelectValue placeholder="Select maintenance type" />
@@ -95,7 +102,7 @@ const Maintenance: React.FC<MaintenanceProps> = ({ formData, onFormDataChange })
               role="combobox"
               className="w-full justify-between"
             >
-              {formData.staff?.length > 0
+              {formData.staff && formData.staff.length > 0
                 ? `${formData.staff.length} staff selected`
                 : "Select staff"}
               <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -129,8 +136,8 @@ const Maintenance: React.FC<MaintenanceProps> = ({ formData, onFormDataChange })
       <div className="flex items-center space-x-2">
         <Checkbox
           id="notification"
-          checked={formData.sendNotification}
-          onCheckedChange={(checked) =>
+          checked={formData.sendNotification || false}
+          onCheckedChange={(checked: boolean) =>
             onFormDataChange({ sendNotification: checked })
           }
         />
@@ -138,6 +145,7 @@ const Maintenance: React.FC<MaintenanceProps> = ({ formData, onFormDataChange })
       </div>
     </div>
   );
+
 };
 
 export default Maintenance;
