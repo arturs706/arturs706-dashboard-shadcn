@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   Select,
   SelectContent,
@@ -45,6 +46,21 @@ interface EventFormData {
   sendNotification?: boolean;
 }
 
+const EVENT_TYPES = [
+  "Appointment",
+  "Inspection",
+  "Maintenance",
+  "Note",
+  "Callback",
+  "Public Holiday",
+  "Sick Leave",
+  "Staff Holiday",
+  "Staff Meeting",
+  "Training",
+  "Valuation",
+  "Viewing",
+] as const;
+
 const EventForm: React.FC<EventFormProps> = ({ rowIndex, colIndex }) => {
   const calculateTime = (row: number | null): string => {
     if (row === null) return "00:00";
@@ -71,9 +87,7 @@ const EventForm: React.FC<EventFormProps> = ({ rowIndex, colIndex }) => {
       newMinutes = 59;
     }
 
-    return `${newHours.toString().padStart(2, "0")}:${newMinutes
-      .toString()
-      .padStart(2, "0")}`;
+    return `${newHours.toString().padStart(2, "0")}:${newMinutes.toString().padStart(2, "0")}`;
   };
 
   const [formData, setFormData] = useState<EventFormData>({
@@ -115,172 +129,91 @@ const EventForm: React.FC<EventFormProps> = ({ rowIndex, colIndex }) => {
   };
 
   const renderEventTypeFields = () => {
-    switch (formData.eventType) {
-      case "Viewing":
-        return (
-          <Viewing
-            formData={formData}
-            onFormDataChange={(newData) =>
-              setFormData((prev) => ({ ...prev, ...newData }))
-            }
-          />
-        );
-      case "Appointment":
-        return (
-          <Appointment
-            formData={formData}
-            onFormDataChange={(newData) =>
-              setFormData((prev) => ({ ...prev, ...newData }))
-            }
-          />
-        );
-      case "Callback":
-        return (
-          <Callback
-            formData={formData}
-            onFormDataChange={(newData) =>
-              setFormData((prev) => ({ ...prev, ...newData }))
-            }
-          />
-        );
-      case "Inspection":
-        return (
-          <Inspection
-            formData={formData}
-            onFormDataChange={(newData) =>
-              setFormData((prev) => ({ ...prev, ...newData }))
-            }
-          />
-        );
-      case "Maintenance":
-        return (
-          <Maintenance
-            formData={formData}
-            onFormDataChange={(newData) =>
-              setFormData((prev) => ({ ...prev, ...newData }))
-            }
-          />
-        );
-      case "Note":
-        return (
-          <Note
-            formData={formData}
-            onFormDataChange={(newData) =>
-              setFormData((prev) => ({ ...prev, ...newData }))
-            }
-          />
-        );
-      case "Public Holiday":
-        return (
-          <PublicHoliday
-            formData={formData}
-            onFormDataChange={(newData) =>
-              setFormData((prev) => ({ ...prev, ...newData }))
-            }
-          />
-        );
-      case "Sick Leave":
-        return (
-          <SickLeave
-            formData={formData}
-            onFormDataChange={(newData) =>
-              setFormData((prev) => ({ ...prev, ...newData }))
-            }
-          />
-        );
-      case "Staff Holiday":
-        return (
-          <StaffHoliday
-            formData={formData}
-            onFormDataChange={(newData) =>
-              setFormData((prev) => ({ ...prev, ...newData }))
-            }
-          />
-        );
-      case "Staff Meeting":
-        return (
-          <StaffMeeting
-            formData={formData}
-            onFormDataChange={(newData) =>
-              setFormData((prev) => ({ ...prev, ...newData }))
-            }
-          />
-        );
-      case "Training":
-        return (
-          <Training
-            formData={formData}
-            onFormDataChange={(newData) =>
-              setFormData((prev) => ({ ...prev, ...newData }))
-            }
-          />
-        );
-      case "Valuation":
-        return (
-          <Valuation
-            formData={formData}
-            onFormDataChange={(newData) =>
-              setFormData((prev) => ({ ...prev, ...newData }))
-            }
-          />
-        );
+    const components = {
+      Viewing,
+      Appointment,
+      Callback,
+      Inspection,
+      Maintenance,
+      Note,
+      "Public Holiday": PublicHoliday,
+      "Sick Leave": SickLeave,
+      "Staff Holiday": StaffHoliday,
+      "Staff Meeting": StaffMeeting,
+      Training,
+      Valuation,
+    };
 
-      default:
-        return null;
-    }
+    const Component = components[formData.eventType as keyof typeof components];
+    return Component ? (
+      <Component
+        formData={formData}
+        onFormDataChange={(newData) => setFormData((prev) => ({ ...prev, ...newData }))}
+      />
+    ) : null;
   };
 
   return (
     <div className="space-y-4" onClick={(e) => e.stopPropagation()}>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="font-bold">Create Event</div>
+      <form onSubmit={handleSubmit} className="space-y-4" id="eventForm" name="eventForm">
+        <h2 className="font-bold text-lg" id="formTitle">Create Event</h2>
+        
         <div className="space-y-2">
-          <Label>Event Type</Label>
+          <Label htmlFor="eventType" className="block">Event Type</Label>
           <Select
             defaultValue={formData.eventType}
             onValueChange={handleDurationChange}
+            name="eventType"
           >
-            <SelectTrigger className="w-full">
-              <SelectValue>{formData.eventType}</SelectValue>
+            <SelectTrigger className="w-full" id="eventType">
+              <SelectValue aria-label="Event type">{formData.eventType}</SelectValue>
             </SelectTrigger>
             <SelectContent>
-              {[
-                "Appointment",
-                "Inspection",
-                "Maintenance",
-                "Note",
-                "Callback",
-                "Public Holiday",
-                "Sick Leave",
-                "Staff Holiday",
-                "Staff Meeting",
-                "Training",
-                "Valuation",
-                "Viewing",
-              ].map((chosendEvent) => (
-                <SelectItem key={chosendEvent} value={chosendEvent}>
-                  {chosendEvent}
+              {EVENT_TYPES.map((eventType) => (
+                <SelectItem 
+                  key={eventType} 
+                  value={eventType}
+                  id={`eventType-${eventType.toLowerCase().replace(/\s+/g, '-')}`}
+                >
+                  {eventType}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
+
         <div className="grid grid-cols-2 gap-4">
-          <TimePicker
-            label="Start Time"
-            value={formData.startTime}
-            onChange={(time) => handleTimeChange("startTime", time)}
-          />
-          <TimePicker
-            label="End Time"
-            value={formData.endTime}
-            onChange={(time) => handleTimeChange("endTime", time)}
-          />
+          <div>
+            <TimePicker
+              label="Start Time"    
+              id="startTime"
+              name="startTime"
+              value={formData.startTime}
+              onChange={(time) => handleTimeChange("startTime", time)}
+              aria-label="Start time"
+            />
+          </div>
+          <div>
+            <TimePicker
+              label="End Time"        
+              id="endTime"
+              name="endTime"
+              value={formData.endTime}
+              onChange={(time) => handleTimeChange("endTime", time)}
+              aria-label="End time"
+            />
+          </div>
         </div>
 
         {renderEventTypeFields()}
 
-        <Button type="submit" className="w-full">
+        <Button 
+          type="submit" 
+          className="w-full"
+          id="submitEvent"
+          name="submitEvent"
+          aria-label="Save event"
+        >
           Save Event
         </Button>
       </form>
