@@ -12,7 +12,7 @@ export async function getData(startDate: string, endDate: string) {
   }
   const uuid = decodeToken(accessToken).sub;
   const apiUrl = `${apiHost}/api/v1/diary-settings/${uuid}`;
-  const userNameUrl = `${apiHost}/api/v1/users/${uuid}`;
+  const userNameUrl = `${apiHost}/api/v1/users/byuserid/${uuid}`;
   const eventUrl = `${apiHost}/api/v1/events/diary/${uuid}/events?start_date=${startDate}&end_date=${endDate}`;
 
   const headers = {

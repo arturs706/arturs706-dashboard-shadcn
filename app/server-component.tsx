@@ -49,7 +49,7 @@ async function getData(): Promise<UserData> {
   
   
   const uuid = decodeToken(accessToken).sub;
-  const apiUrl = `${apiHost}/api/v1/users/${uuid}`;
+  const apiUrl = `${apiHost}/api/v1/users/byuserid/${uuid}`;
 
   const res = await fetch(apiUrl, {
     headers: {

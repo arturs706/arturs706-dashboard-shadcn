@@ -42,6 +42,7 @@ const CalendarGrid = ({ initialData, refreshData }: CalendarProps) => {
     setSelectedCol(colIndex);
     setModalMessage(`You clicked on cell at Row: ${rowIndex}, Column: ${colIndex}`);
     setIsModalOpen(true);
+    console.log(`You clicked on cell at Row: ${rowIndex}, Column: ${colIndex}`);
   };
 
   const handleEventSubmit = (eventData: CalendarEvent) => {

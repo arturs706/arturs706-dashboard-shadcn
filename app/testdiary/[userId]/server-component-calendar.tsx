@@ -8,12 +8,11 @@ export function createServerComponent(ClientComponent: ComponentType<any>) {
     const endDate = format(endOfWeek(new Date(), { weekStartsOn: 1 }), 'yyyy-MM-dd');
     
     const initialData = await getData(startDate, endDate);
-    
+  
     const refreshData = async (start: string, end: string) => {
 
       'use server';
       console.log(start, end);
-
       return getData(start, end);
     };
 

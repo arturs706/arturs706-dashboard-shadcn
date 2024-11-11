@@ -36,6 +36,17 @@ interface ViewingData extends BaseEventData {
   sendNotification?: boolean;
 }
 
+export interface StaffMember {
+  user_id: string;
+  name: string;
+}
+
+export interface Property {
+  id: string;
+  address: string;
+  reference?: string;
+}
+
 interface AppointmentData extends BaseEventData {
   eventType: "Appointment";
   appointmentType?: string;

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Select,
   SelectContent,
@@ -9,7 +9,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import TimePicker from "./TimePicker";
-import Viewing from "./eventform/Viewing";
 import Appointment from "./eventform/Appointment";
 import Callback from "./eventform/Callback";
 import Inspection from "./eventform/Inspection";
@@ -21,6 +20,7 @@ import StaffHoliday from "./eventform/StaffHoliday";
 import { Training } from "./eventform/Training";
 import Valuation from "./eventform/Valuation";
 import StaffMeeting from "./eventform/StaffMeeting";
+import Viewing from './eventform/Viewing';
 import {
   createInitialEventData,
   EVENT_TYPES,
@@ -41,30 +41,92 @@ type EventComponentMap = {
 };
 
 const EventForm: React.FC<EventFormProps> = ({ rowIndex, colIndex }) => {
-  const calculateTime = (row: number | null): string => {
-    if (row === null) return "00:00";
-    const hour = Math.floor(row / 2);
-    const minute = (row % 2) * 30;
-    return `${hour.toString().padStart(2, "0")}:${minute.toString().padStart(2, "0")}`;
+  // Helper function to convert time string to minutes
+  const timeToMinutes = (time: string): number => {
+    const [hours, minutes] = time.split(':').map(Number);
+    return hours * 60 + minutes;
   };
 
-  const calculateEndTime = (startTime: string): string => {
-    if (startTime === "--:--") return "00:00";
-    const [hours, minutes] = startTime.split(":").map(Number);
-    let newMinutes = minutes + 15;
-    let newHours = hours;
+  // Helper function to convert minutes to time string
+  const minutesToTime = (minutes: number): string => {
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
+  };
 
-    if (newMinutes >= 60) {
-      newMinutes -= 60;
-      newHours += 1;
+  // Calculate initial time based on row index
+  const calculateInitialTime = (row: number | null): string => {
+    if (row === null) return "09:00"; // Default start time
+    const totalMinutes = (Math.floor(row / 2) * 60) + ((row % 2) * 30);
+    return minutesToTime(totalMinutes);
+  };
+
+  // Calculate end time based on event type and start time
+  const calculateEndTime = (startTime: string, eventType: EventFormData['eventType']): string => {
+    const defaultDurations: { [key in EventFormData['eventType']]?: number } = {
+      'Viewing': 30,
+      'Appointment': 60,
+      'Callback': 15,
+      'Inspection': 45,
+      'Maintenance': 120,
+      'Staff Meeting': 60,
+      'Training': 180,
+      'Valuation': 45,
+    };
+
+    const startMinutes = timeToMinutes(startTime);
+    const duration = defaultDurations[eventType] || 30; // Default 30 minutes if not specified
+    const endMinutes = Math.min(startMinutes + duration, 23 * 60 + 59); // Cap at 23:59
+
+    return minutesToTime(endMinutes);
+  };
+
+  // Initialize form data with calculated times
+  const [formData, setFormData] = useState<EventFormData>(() => {
+    const initialTime = calculateInitialTime(rowIndex);
+    const initialData = createInitialEventData("Viewing");
+    return {
+      ...initialData,
+      startTime: initialTime,
+      endTime: calculateEndTime(initialTime, "Viewing"),
+    };
+  });
+
+  // Handle time changes with validation
+  const handleTimeChange = (type: "startTime" | "endTime", value: string) => {
+    if (type === "startTime") {
+      setFormData((prev) => ({
+        ...prev,
+        startTime: value,
+        endTime: calculateEndTime(value, prev.eventType),
+      }));
+    } else {
+      const startMinutes = timeToMinutes(formData.startTime);
+      const endMinutes = timeToMinutes(value);
+      
+      if (endMinutes <= startMinutes) {
+        // If end time is before or equal to start time, adjust it
+        const adjustedEndTime = calculateEndTime(formData.startTime, formData.eventType);
+        setFormData((prev) => ({
+          ...prev,
+          endTime: adjustedEndTime,
+        }));
+      } else {
+        setFormData((prev) => ({
+          ...prev,
+          endTime: value,
+        }));
+      }
     }
+  };
 
-    if (newHours >= 24) {
-      newHours = 23;
-      newMinutes = 59;
-    }
-
-    return `${newHours.toString().padStart(2, "0")}:${newMinutes.toString().padStart(2, "0")}`;
+  // Handle event type changes
+  const handleEventTypeChange = (value: typeof EVENT_TYPES[number]) => {
+    setFormData((prev) => ({
+      ...createInitialEventData(value),
+      startTime: prev.startTime,
+      endTime: calculateEndTime(prev.startTime, value),
+    }));
   };
 
   const EVENT_COMPONENTS: EventComponentMap = {
@@ -82,35 +144,14 @@ const EventForm: React.FC<EventFormProps> = ({ rowIndex, colIndex }) => {
     "Valuation": Valuation,
   };
 
-  const [formData, setFormData] = useState<EventFormData>(() => {
-    const initialTime = calculateTime(rowIndex);
-    return createInitialEventData("Viewing");
-  });
-
-  const handleTimeChange = (type: "startTime" | "endTime", value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      [type]: value,
-      ...(type === "startTime" ? { endTime: calculateEndTime(value) } : {}),
-    }));
-  };
-
-  const handleEventTypeChange = (value: typeof EVENT_TYPES[number]) => {
-    // Create new form data with the new event type while preserving times
-    const { startTime, endTime } = formData;
-    const newData = createInitialEventData(value);
-    setFormData({
-      ...newData,
-      startTime,
-      endTime,
-    });
-  };
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const isValid = validateEventData(formData);
-    console.log("Event Type:", formData.eventType);
-    console.log(isValid);
+    if (isValid) {
+      console.log("Valid event data:", formData);
+    } else {
+      console.log("Invalid event data:", formData);
+    }
   };
 
   const renderEventTypeFields = () => {

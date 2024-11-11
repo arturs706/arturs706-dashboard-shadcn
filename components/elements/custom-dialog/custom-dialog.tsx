@@ -86,7 +86,7 @@ const CustomModal: React.FC<CustomModalProps> = ({
           shadow-lg
           w-full
           max-w-md
-          max-h-[68.6vh]  /* Updated to 50vh */
+          max-h-[68.6vh]  
           overflow-y-auto
           p-6
           m-4
@@ -104,7 +104,7 @@ const CustomModal: React.FC<CustomModalProps> = ({
         {/* Close button */}
         <button
           onClick={() => onOpenChange(false)}
-          className="absolute top-0 right-0 text-gray-500 hover:text-gray-700 p-2 text-2xl"
+          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 p-2 text-2xl"
         >
           &times;
         </button>
