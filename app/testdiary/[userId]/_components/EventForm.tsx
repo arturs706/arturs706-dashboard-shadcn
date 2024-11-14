@@ -81,7 +81,6 @@ const EventForm: React.FC<EventFormProps> = ({ rowIndex, colIndex }) => {
     return minutesToTime(endMinutes);
   };
 
-  // Initialize form data with calculated times
   const [formData, setFormData] = useState<EventFormData>(() => {
     const initialTime = calculateInitialTime(rowIndex);
     const initialData = createInitialEventData("Viewing");
@@ -92,7 +91,6 @@ const EventForm: React.FC<EventFormProps> = ({ rowIndex, colIndex }) => {
     };
   });
 
-  // Handle time changes with validation
   const handleTimeChange = (type: "startTime" | "endTime", value: string) => {
     if (type === "startTime") {
       setFormData((prev) => ({
@@ -105,7 +103,6 @@ const EventForm: React.FC<EventFormProps> = ({ rowIndex, colIndex }) => {
       const endMinutes = timeToMinutes(value);
       
       if (endMinutes <= startMinutes) {
-        // If end time is before or equal to start time, adjust it
         const adjustedEndTime = calculateEndTime(formData.startTime, formData.eventType);
         setFormData((prev) => ({
           ...prev,
@@ -120,7 +117,6 @@ const EventForm: React.FC<EventFormProps> = ({ rowIndex, colIndex }) => {
     }
   };
 
-  // Handle event type changes
   const handleEventTypeChange = (value: typeof EVENT_TYPES[number]) => {
     setFormData((prev) => ({
       ...createInitialEventData(value),

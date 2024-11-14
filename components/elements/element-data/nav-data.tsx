@@ -54,7 +54,7 @@ export const administrativeTools: NavigationItem[] = [
 export const salesComponents: NavigationItem[] = [
   {
     title: "Sales Properties",
-    href: "/sales/residential/properties",
+    href: "/sales/properties/residential",
     description: "A list of properties for sale."
   },
   {
@@ -64,7 +64,7 @@ export const salesComponents: NavigationItem[] = [
   },
   {
     title: "Buyers",
-    href: "/sales/residential/buyers",
+    href: "/sales/buyers",
     description: "A list of buyers who are interested in buying properties."
   },
   {
@@ -77,7 +77,7 @@ export const salesComponents: NavigationItem[] = [
 export const lettingsComponents: NavigationItem[] = [
   {
     title: "Properties",
-    href: "/lettings/residential/properties",
+    href: "/lettings/properties/residential/",
     description: "A list of properties for letting."
   },
   {

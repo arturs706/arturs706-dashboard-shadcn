@@ -13,7 +13,7 @@ interface ClientComponentProps {
 export default function ClientComponent({ data }: ClientComponentProps) {
   const [count, setCount] = useState(0);
 
-  if (!data) return null; // Handle case where data isn't provided
+  if (!data) return null; 
 
   return (
     <div className="p-8">
@@ -26,6 +26,7 @@ export default function ClientComponent({ data }: ClientComponentProps) {
           <p>Your account level is: {data.acc_level}</p>
         </CardContent>
       </Card>
+      
     </div>
   );
 }
