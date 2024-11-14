@@ -27,7 +27,6 @@ export const personalTools = (uuid: string): NavigationItem[] => [
   }
 ];
 
-// Update other exports to use the NavigationItem type
 export const administrativeTools: NavigationItem[] = [
   {
     title: "Address Book",
@@ -54,17 +53,17 @@ export const administrativeTools: NavigationItem[] = [
 export const salesComponents: NavigationItem[] = [
   {
     title: "Sales Properties",
-    href: "/sales/properties/residential",
+    href: "/sales/residential/properties",
     description: "A list of properties for sale."
   },
   {
     title: "Vendors",
-    href: "/sales/vendors",
+    href: "/sales/residential/vendors",
     description: "A list of vendors who have properties for sale."
   },
   {
     title: "Buyers",
-    href: "/sales/buyers",
+    href: "/sales/residential/buyers",
     description: "A list of buyers who are interested in buying properties."
   },
   {
@@ -77,17 +76,17 @@ export const salesComponents: NavigationItem[] = [
 export const lettingsComponents: NavigationItem[] = [
   {
     title: "Properties",
-    href: "/lettings/properties/residential/",
+    href: "/lettings/residential/properties",
     description: "A list of properties for letting."
   },
   {
     title: "Landlords",
-    href: "/lettings/landlords",
+    href: "/lettings/residential/landlords",
     description: "A list of landlords who have properties for letting."
   },
   {
     title: "Tenants",
-    href: "/lettings/tenants/residential",
+    href: "/lettings/residential/tenants",
     description: "A list of tenants who are interested in renting properties."
   },
   {
@@ -105,17 +104,17 @@ export const lettingsComponents: NavigationItem[] = [
 export const marketingComponents: NavigationItem[] = [
   {
     title: "Portals",
-    href: "/portals",
+    href: "/marketing/portals",
     description: "Select the portal accounts to be included in the export."
   },
   {
     title: "Social Media",
-    href: "/social-media",
+    href: "/marketing/socialmedia",
     description: "Get the social media accounts for the properties."
   },
   {
     title: "Board Management",
-    href: "/board-management",
+    href: "/marketing/boards",
     description: "Board management for the properties."
   }
 ];
@@ -133,7 +132,7 @@ export const adminComponents: NavigationItem[] = [
   },
   {
     title: "System Data",
-    href: "/system-data",
+    href: "/systemdata",
     description: "Manage the system data."
   }
 ];
@@ -141,27 +140,27 @@ export const adminComponents: NavigationItem[] = [
 export const templatesComponents: NavigationItem[] = [
   {
     title: "Letters & Emails",
-    href: "/letters-and-emails",
+    href: "/templates/lettersandemails",
     description: "Manage the letters and emails for the system."
   },
   {
     title: "Documents",
-    href: "/documents",
+    href: "/templates/documents",
     description: "Manage the documents for the system."
   },
   {
     title: "Other",
-    href: "/other",
+    href: "/templates/other",
     description: "Manage the other templates for the system."
   },
   {
     title: "Images",
-    href: "/images",
+    href: "/templates/images",
     description: "Manage the images for the system."
   },
   {
     title: "Checklists",
-    href: "/checklists",
+    href: "/templates/checklists",
     description: "Manage the checklists for the system."
   }
 ];
